@@ -14,35 +14,45 @@ data = atomData.read()
 for i,j,k in expression.scanString(data):
 	atomUrlList.append(i[1])
 
+
+
 #print atomUrlList
 # atomUrlList = ['http://kurucz.harvard.edu/atoms/0400/']
 
 #now see if .gam file regarding each atom is present or not.
 
 #dataFile = []
-filename = Word(alphanums)+".gam"
+# filename = Word(alphanums)+".gam"
+# for url in atomUrlList:
+# 	fileListing = urlopen(url).read()
+# 	generator = filename.scanString(fileListing)
+# 	#dataFile.append(next(generator,None))
+# 	data = urlopen(next(generator,None)).read()
+# 	create_dictionary(data)
+
+
+# Most important data is in 2 files initially
+
 for url in atomUrlList:
-	fileListing = urlopen(url).read()
-	generator = filename.scanString(fileListing)
-	#dataFile.append(next(generator,None))
-	data = urlopen(next(generator,None)).read()
-	create_dictionary(data)
+	uniqueName = url[-5:-1]
+	linesUrl = url+"gf"+uniqueName+".lines"
+	levelsUrl = url + "gf"+ uniqueName + ".gam"
 
 
-def create_dictionary(data):
+# def create_dictionary(data):
 	
 
-	#read atom detail which is 5 characters long
-	atom = data.read(5)
+# 	#read atom detail which is 5 characters long
+# 	atom = data.read(5)
 
-	dictionary = {}
-	dictionary['atom'] = atom
+# 	dictionary = {}
+# 	dictionary['atom'] = atom
 
-	label = delimitedList(Word(alphas+'-'+nums), delim=' ', combine=True)
-	line = Word(nums) + label
+# 	label = delimitedList(Word(alphas+'-'+nums), delim=' ', combine=True)
+# 	line = Word(nums) + label
 
-	#create dictionary to store observation metadata for atom = 'atom'
-	for line_tokens, start_location, end_location in line.scanString(data.readline()):
-		dictionary[line_tokens[1]] = line_tokens[0]	
+# 	#create dictionary to store observation metadata for atom = 'atom'
+# 	for line_tokens, start_location, end_location in line.scanString(data.readline()):
+# 		dictionary[line_tokens[1]] = line_tokens[0]	
 
-	print dictionary
+# 	print dictionary
