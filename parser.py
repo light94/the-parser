@@ -1,9 +1,18 @@
 from pyparsing import Word, alphanums,alphas
 from urllib2 import urlopen
 
+import pandas as pd
+import numpy as np
+
+import h5py
+
+import os
+os.chdir('/home/rahul/Rahul/X')
 expression = 'HREF="'+Word(alphanums+':/.')+'"'
 atomData =  urlopen('http://kurucz.harvard.edu/atoms/0atoms.readme')
 atomUrlList = []
+linesUrl = []
+levelsUrl = []
 
 #remove interfering data
 for i in range(30):
@@ -16,43 +25,18 @@ for i,j,k in expression.scanString(data):
 
 
 
-#print atomUrlList
-# atomUrlList = ['http://kurucz.harvard.edu/atoms/0400/']
-
-#now see if .gam file regarding each atom is present or not.
-
-#dataFile = []
-# filename = Word(alphanums)+".gam"
-# for url in atomUrlList:
-# 	fileListing = urlopen(url).read()
-# 	generator = filename.scanString(fileListing)
-# 	#dataFile.append(next(generator,None))
-# 	data = urlopen(next(generator,None)).read()
-# 	create_dictionary(data)
-
-
-# Most important data is in 2 files initially
-
 for url in atomUrlList:
 	uniqueName = url[-5:-1]
-	linesUrl = url+"gf"+uniqueName+".lines"
-	levelsUrl = url + "gf"+ uniqueName + ".gam"
+	linesUrl.append(url+"gf"+uniqueName+".lines")
+	levelsUrl.append(url + "gf"+ uniqueName + ".gam")
 
+data = urlopen('http://kurucz.harvard.edu/atoms/1401/gf1401.gam')
+colspaces = [(0,9),(10,12),(13,24),(26,29),(30,42),(43,48)]
+dataFrame = pd.read_fwf(data,colspecs=colspaces,skiprows=38,nrows=1764)
+levelsFile = pd.HDFStore('tardis.h5')
+store['levels_data'] = dataFrame
+levels_data = store['levels_data']
+store['levels_data'].columns=['elem','index','E','J','label','glande']
 
-# def create_dictionary(data):
-	
-
-# 	#read atom detail which is 5 characters long
-# 	atom = data.read(5)
-
-# 	dictionary = {}
-# 	dictionary['atom'] = atom
-
-# 	label = delimitedList(Word(alphas+'-'+nums), delim=' ', combine=True)
-# 	line = Word(nums) + label
-
-# 	#create dictionary to store observation metadata for atom = 'atom'
-# 	for line_tokens, start_location, end_location in line.scanString(data.readline()):
-# 		dictionary[line_tokens[1]] = line_tokens[0]	
-
-# 	print dictionary
+for elem in store['levels_data']['elem']:
+    print elem[:5]
